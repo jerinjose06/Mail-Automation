@@ -1,0 +1,37 @@
+[
+  {
+    "id": "1",
+    "date": "05-07-2026",
+    "sender": "alice@example.com",
+    "subject": "Project Update",
+    "body": "Hey, just letting you know the project is on track. We finished the backend module."
+  },
+  {
+    "id": "2",
+    "date": "05-07-2026",
+    "sender": "alice@example.com",
+    "subject": "Lunch?",
+    "body": "Do you want to grab lunch today? I was thinking tacos."
+  },
+  {
+    "id": "3",
+    "date": "06-07-2026",
+    "sender": "bob@example.com",
+    "subject": "Invoice Attached",
+    "body": "Please find the attached invoice for last month's services."
+  },
+  {
+    "id": "4",
+    "date": "07-07-2026",
+    "sender": "boss@company.com",
+    "subject": "Urgent Update",
+    "body": "This is an urgent matter. Please resolve."
+  },
+  {
+   "id": "abc123xyz",
+   "date": "2026-07-03",
+   "sender": "charlie@example.com",
+   "subject": "Urgent meeting request",
+   "body": "Hey, we need to schedule an urgent alignment meeting regarding the UI changes."
+ }
+]

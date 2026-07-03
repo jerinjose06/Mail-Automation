@@ -1,0 +1,18 @@
+# Environments
+venv/
+env/
+__pycache__/
+*.pyc
+
+# Database
+*.db
+email_agent.db
+
+# Credentials and secrets
+credentials.json
+token.json
+.env
+
+# OS files
+.DS_Store
+Thumbs.db
