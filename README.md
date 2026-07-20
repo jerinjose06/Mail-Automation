@@ -4,7 +4,8 @@ An intelligent, fully autonomous local email assistant that monitors your Gmail 
 
 ## Features
 
-- **Background Polling**: Runs as a daemon thread alongside a Streamlit dashboard, sweeping your inbox for unread messages without freezing the UI.
+- **Decoupled Architecture**: Features a fast Python FastAPI backend for AI processing and a premium, dark-mode Next.js (React) frontend dashboard.
+- **Background Polling**: Runs as an async daemon task in the backend, sweeping your inbox for unread messages without freezing the API.
 - **Semantic Rule Evaluation**: Uses LangGraph and a local LLM (`ChatOllama` with `qwen3.5:4b`) to semantically evaluate incoming emails against your custom alert conditions. It understands intent (e.g., "meeting at 5pm" matches a rule for "meeting after 4pm").
 - **Desktop Notifications**: Instant audio chimes and visual popup alerts natively on your desktop when an important email matches a rule.
 - **Autonomous Auto-Replies**: Capable of composing professional, context-aware responses and sending them as true inline threaded replies to the original sender using the Gmail API.
@@ -13,7 +14,7 @@ An intelligent, fully autonomous local email assistant that monitors your Gmail 
 
 ## Prerequisites
 
-1. **Python 3.8+**
+1. **Python 3.10+** & **Node.js (v18+)**
 2. **Ollama**: You must have [Ollama](https://ollama.com/) installed and running locally.
 3. **Local LLM Model**: Pull the required model via terminal:
    ```bash
@@ -21,7 +22,7 @@ An intelligent, fully autonomous local email assistant that monitors your Gmail 
    ```
 4. **Google Cloud Credentials**: 
    - You need a Google Cloud Console project with the **Gmail API** enabled.
-   - Download the OAuth client ID as `credentials.json` and place it in the project root.
+   - Download the OAuth client ID as `credentials.json` and place it in the project root (`local-email-agent/`).
 
 ## Installation
 
@@ -30,7 +31,7 @@ An intelligent, fully autonomous local email assistant that monitors your Gmail 
    git clone https://github.com/jerinjose06/Mail-Automation.git
    cd Mail-Automation/local-email-agent
    ```
-2. Create and activate a virtual environment (recommended):
+2. Create and activate a Python virtual environment:
    ```bash
    python -m venv venv
    # On Windows:
@@ -38,26 +39,42 @@ An intelligent, fully autonomous local email assistant that monitors your Gmail 
    # On Mac/Linux:
    source venv/bin/activate
    ```
-3. Install the dependencies:
+3. Install backend dependencies:
    ```bash
-   pip install streamlit langchain langchain_core google-auth-oauthlib google-api-python-client plyer
+   pip install fastapi uvicorn langchain langchain_core langchain_community langchain_ollama langgraph google-auth-oauthlib google-api-python-client plyer
+   ```
+4. Install frontend dependencies:
+   ```bash
+   cd frontend
+   npm install
    ```
 
 ## Usage
 
-1. Start the Streamlit application:
+You must run both the backend API and the frontend UI. 
+
+1. **Start the Backend API (Terminal 1):**
    ```bash
-   streamlit run app.py
+   cd local-email-agent
+   uvicorn main:app --reload
    ```
-2. **First Run Authentication**: On the first run, the app will open a browser window asking you to authenticate with your Google account. This will generate a `token.json` file to keep you logged in.
+   *Note on First Run*: The backend will open a browser window asking you to authenticate with your Google account. This will generate a `token.json` file to keep you logged in.
+
+2. **Start the Frontend Dashboard (Terminal 2):**
+   ```bash
+   cd local-email-agent/frontend
+   npm run dev
+   ```
+
 3. **Dashboard Interface**:
-   - Use the chat interface to instruct the agent to add new monitoring rules. (e.g., "Alert me if Charlie sends an email about a meeting").
-   - View your currently active tracking rules on the sidebar.
-   - View historical triggered alerts and summaries on the dashboard feed.
+   - Open your browser to `http://localhost:3000`.
+   - Use the ChatInterface to instruct the agent to add new monitoring rules (e.g., "Alert me if Charlie sends an email about a meeting").
+   - View your currently active tracking rules and historical triggered alerts.
 
 ## System Architecture
 
-- `app.py`: The Streamlit frontend and background thread initializer.
+- `main.py`: The FastAPI server containing the REST endpoints and the lifespan manager that starts the background poller and Ollama process.
+- `frontend/`: The Next.js App Router providing a premium glassmorphic UI.
 - `poller.py`: The core daemon loop that checks Gmail, runs semantic rule checks, pops notifications, and invokes the auto-responder agent.
 - `agent.py`: LangGraph implementation and tool binding for the local LLM.
 - `database.py`: Local SQLite database manager for tracking processed emails and saving rules.
