@@ -44,7 +44,7 @@ export default function ChatInterface() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ message: userMessage.content }),
+        body: JSON.stringify({ prompt: userMessage.content }),
       });
 
       if (!response.ok) throw new Error("Failed to fetch");
@@ -54,7 +54,7 @@ export default function ChatInterface() {
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: "assistant",
-        content: data.reply || "I received your message, but the response format was unexpected.",
+        content: data.response || "I received your message, but the response format was unexpected.",
       };
 
       setMessages((prev) => [...prev, assistantMessage]);
@@ -87,7 +87,7 @@ export default function ChatInterface() {
             className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
           >
             <div
-              className={`max-w-[80%] rounded-2xl px-4 py-3 ${
+              className={`max-w-[80%] whitespace-pre-wrap rounded-2xl px-4 py-3 ${
                 msg.role === "user"
                   ? "bg-indigo-600 text-white rounded-br-none"
                   : "bg-white/10 text-slate-100 rounded-bl-none border border-white/5"
